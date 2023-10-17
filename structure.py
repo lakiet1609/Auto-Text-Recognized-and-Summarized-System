@@ -3,6 +3,8 @@ from pathlib import Path
 
 list_files = [
     'src/components/__init__.py',
+    'src/models/__init__.py',
+    'src/pipeline/__init__.py',
     'src/utils/__init__.py',
     'triton_models/.gitkeep'
 ]
