@@ -23,6 +23,7 @@ os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 import cv2
 import numpy as np
 import sys
+import tritonclient.grpc as grpcclient
 
 import src.common.utility as utility
 from src.common.ppocr.utils.logging import get_logger
@@ -71,9 +72,10 @@ class TextDetector(object):
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
         self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, 'det', logger)
-
-        self.url = '192.168.1.10'
-
+        
+        self.url = '192.168.1.10:8001'
+        self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
+        self.model_name = 'text_det_infer'
 
     def order_points_clockwise(self, pts):
         rect = np.zeros((4, 2), dtype="float32")
@@ -128,18 +130,21 @@ class TextDetector(object):
             return None, 0
         img = np.expand_dims(img, axis=0)
         shape_list = np.expand_dims(shape_list, axis=0)
-        img = img.copy()
-
-        self.input_tensor.copy_from_cpu(img)
-        self.predictor.run()
+        
+        img_shape = list(img.shape)
+        inputs = []
         outputs = []
-        for output_tensor in self.output_tensors:
-            output = output_tensor.copy_to_cpu()
-            outputs.append(output)
+        
+        inputs.append(grpcclient.InferInput("x", img_shape, "FP32"))
+        inputs[0].set_data_from_numpy(img)
+
+        outputs.append(grpcclient.InferRequestedOutput("sigmoid_0.tmp_0"))
+
+        results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
+        output_data = results.as_numpy("sigmoid_0.tmp_0")
 
         preds = {}
-        preds['maps'] = outputs[0]
-
+        preds['maps'] = output_data
         post_result = self.postprocess_op(preds, shape_list)
         dt_boxes = post_result[0]['points']
         dt_boxes = self.filter_tag_det_res(dt_boxes, ori_im.shape)
