@@ -72,6 +72,8 @@ class TextDetector(object):
         self.postprocess_op = build_post_process(postprocess_params)
         self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, 'det', logger)
 
+        self.url = '192.168.1.10'
+
 
     def order_points_clockwise(self, pts):
         rect = np.zeros((4, 2), dtype="float32")
