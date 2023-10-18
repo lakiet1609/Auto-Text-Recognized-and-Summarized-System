@@ -1,0 +1,1 @@
+python3 components/predict_det.py --det_algorithm="DB" --det_model_dir="models/en_PP-OCRv3_det_infer" --image_dir="common/doc/imgs/ger_2.jpg" --use_gpu=True
