@@ -73,7 +73,7 @@ class TextDetector(object):
         
         self.url = '192.168.1.10:8001'
         self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
-        self.model_name = 'infer_text_det'
+        self.model_name = 'text_det'
 
     def order_points_clockwise(self, pts):
         rect = np.zeros((4, 2), dtype="float32")
@@ -130,44 +130,16 @@ class TextDetector(object):
         inputs.append(grpcclient.InferInput("images", img_shape, "UINT8"))
         inputs[0].set_data_from_numpy(img_triton)
 
-        outputs.append(grpcclient.InferRequestedOutput("pre_det_image"))
+        outputs.append(grpcclient.InferRequestedOutput("text_det_infer_output"))
         outputs.append(grpcclient.InferRequestedOutput("pre_det_shape_list"))
 
-        results = self.triton_client.infer(model_name='pre_text_det', inputs=inputs, outputs=outputs)
-        
-        pre_det_image = results.as_numpy("pre_det_image")
-        pre_det_shape_list = results.as_numpy("pre_det_shape_list")
-        # print(pre_det_shape_list.shape)
-        
-        # # H, W, C 
-        # ori_im = img.copy()
-        # data = {'image': img}
-        # data = transform(data, self.preprocess_op)
-        # img, shape_list = data
-        
-        # if img is None:
-        #     return None, 0
-        
-        # img = np.expand_dims(img, axis=0) #B, C, H, W
-        # shape_list = np.expand_dims(shape_list, axis=0)
-        
-        # print(img.shape)
-        # print(shape_list)
-        
-        pre_img_shape = list(pre_det_image.shape)
-        inputs = []
-        outputs = []
-        
-        inputs.append(grpcclient.InferInput("x", pre_img_shape, "FP32"))
-        inputs[0].set_data_from_numpy(pre_det_image)
-
-        outputs.append(grpcclient.InferRequestedOutput("sigmoid_0.tmp_0"))
-
         results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
-        output_data = results.as_numpy("sigmoid_0.tmp_0")
+        
+        text_det_infer_output = results.as_numpy("text_det_infer_output")
+        pre_det_shape_list = results.as_numpy("pre_det_shape_list")
 
         preds = {}
-        preds['maps'] = output_data
+        preds['maps'] = text_det_infer_output
         post_result = self.postprocess_op(preds, pre_det_shape_list)
         dt_boxes = post_result[0]['points']
         dt_boxes = self.filter_tag_det_res(dt_boxes, ori_img.shape)
