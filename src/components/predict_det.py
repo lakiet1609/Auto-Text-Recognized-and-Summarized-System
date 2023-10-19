@@ -26,12 +26,8 @@ import numpy as np
 import sys
 import tritonclient.grpc as grpcclient
 
-import src.common.utility as utility
-from src.common.ppocr.utils.logging import get_logger
-from src.common.ppocr.data import create_operators, transform
 from src.common.ppocr.postprocess import build_post_process
 
-logger = get_logger()
 
 class TextDetector(object):
     def __init__(self):

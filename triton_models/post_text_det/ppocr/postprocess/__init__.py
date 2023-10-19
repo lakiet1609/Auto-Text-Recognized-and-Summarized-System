@@ -21,9 +21,10 @@ import copy
 
 __all__ = ['build_post_process']
 
-from .db_postprocess import DBPostProcess
+from .db_postprocess import DBPostProcess, DistillationDBPostProcess
 from .rec_postprocess import CTCLabelDecode
 from .cls_postprocess import ClsPostProcess
+
 
 
 def build_post_process(config, global_config=None):
@@ -32,6 +33,7 @@ def build_post_process(config, global_config=None):
         'CTCLabelDecode',
         'ClsPostProcess'
     ]
+
 
     config = copy.deepcopy(config)
     module_name = config.pop('name')
