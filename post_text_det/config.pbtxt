@@ -1,0 +1,29 @@
+  name: "post_text_det"
+  backend: "python"
+  max_batch_size: 8
+  input [
+    {
+      name: "post_text_input"
+      data_type: TYPE_FP32
+      dims: [1,-1,-1]
+    },
+    {
+      name: "pre_det_shape_list"
+      data_type: TYPE_FP32
+      dims: [4]
+    }
+  ]
+output [
+    {
+      name: "post_text_output"
+      data_type: TYPE_FP32
+      dims: [-1,4,2]
+    }
+  ]
+
+instance_group [
+    {
+      count: 1
+      kind: KIND_GPU
+    }
+  ]

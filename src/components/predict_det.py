@@ -113,12 +113,14 @@ class TextDetector(object):
         
         text_det_infer_output = results.as_numpy("text_det_infer_output")
         pre_det_shape_list = results.as_numpy("pre_det_shape_list")
+        print(text_det_infer_output.shape)
 
         preds = {}
         preds['maps'] = text_det_infer_output
         post_result = self.postprocess_op(preds, pre_det_shape_list)
         dt_boxes = post_result[0]['points']
         dt_boxes = self.filter_tag_det_res(dt_boxes, ori_img.shape)
+        print(dt_boxes.shape)
 
         return dt_boxes
 
