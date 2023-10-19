@@ -1,4 +1,4 @@
-  name: "text_det_infer"
+  name: "infer_text_det"
   platform: "onnxruntime_onnx"
   max_batch_size: 8
   input [

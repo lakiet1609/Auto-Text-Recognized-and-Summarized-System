@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
 
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
+from copy import deepcopy
 import cv2
 import numpy as np
 import sys
@@ -35,7 +36,6 @@ logger = get_logger()
 class TextDetector(object):
     def __init__(self, args):
         self.args = args
-        self.det_algorithm = args.det_algorithm
         pre_process_list = [{
             'DetResizeForTest': {
                 'limit_side_len': args.det_limit_side_len,
@@ -55,19 +55,17 @@ class TextDetector(object):
                 'keep_keys': ['image', 'shape']
             }
         }]
+        
         postprocess_params = {}
-        if self.det_algorithm == "DB":
-            postprocess_params['name'] = 'DBPostProcess'
-            postprocess_params["thresh"] = args.det_db_thresh
-            postprocess_params["box_thresh"] = args.det_db_box_thresh
-            postprocess_params["max_candidates"] = 1000
-            postprocess_params["unclip_ratio"] = args.det_db_unclip_ratio
-            postprocess_params["use_dilation"] = args.use_dilation
-            postprocess_params["score_mode"] = args.det_db_score_mode
-            postprocess_params["box_type"] = args.det_box_type
-        else:
-            logger.info("unknown det_algorithm:{}".format(self.det_algorithm))
-            sys.exit(0)
+
+        postprocess_params['name'] = 'DBPostProcess'
+        postprocess_params["thresh"] = args.det_db_thresh
+        postprocess_params["box_thresh"] = args.det_db_box_thresh
+        postprocess_params["max_candidates"] = 1000
+        postprocess_params["unclip_ratio"] = args.det_db_unclip_ratio
+        postprocess_params["use_dilation"] = args.use_dilation
+        postprocess_params["score_mode"] = args.det_db_score_mode
+        postprocess_params["box_type"] = args.det_box_type
 
         self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
@@ -75,7 +73,7 @@ class TextDetector(object):
         
         self.url = '192.168.1.10:8001'
         self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
-        self.model_name = 'text_det_infer'
+        self.model_name = 'infer_text_det'
 
     def order_points_clockwise(self, pts):
         rect = np.zeros((4, 2), dtype="float32")
@@ -122,21 +120,46 @@ class TextDetector(object):
         return dt_boxes
 
     def __call__(self, img):
-        ori_im = img.copy()
-        data = {'image': img}
-        data = transform(data, self.preprocess_op)
-        img, shape_list = data
-        if img is None:
-            return None, 0
-        img = np.expand_dims(img, axis=0)
-        shape_list = np.expand_dims(shape_list, axis=0)
+        ori_img = deepcopy(img)
         
-        img_shape = list(img.shape)
+        img_triton = np.expand_dims(img, axis=0)
+        img_shape = list(img_triton.shape)
+ 
+        inputs = []
+        outputs = []
+        inputs.append(grpcclient.InferInput("images", img_shape, "UINT8"))
+        inputs[0].set_data_from_numpy(img_triton)
+
+        outputs.append(grpcclient.InferRequestedOutput("pre_det_image"))
+        outputs.append(grpcclient.InferRequestedOutput("pre_det_shape_list"))
+
+        results = self.triton_client.infer(model_name='pre_text_det', inputs=inputs, outputs=outputs)
+        
+        pre_det_image = results.as_numpy("pre_det_image")
+        pre_det_shape_list = results.as_numpy("pre_det_shape_list")
+        # print(pre_det_shape_list.shape)
+        
+        # # H, W, C 
+        # ori_im = img.copy()
+        # data = {'image': img}
+        # data = transform(data, self.preprocess_op)
+        # img, shape_list = data
+        
+        # if img is None:
+        #     return None, 0
+        
+        # img = np.expand_dims(img, axis=0) #B, C, H, W
+        # shape_list = np.expand_dims(shape_list, axis=0)
+        
+        # print(img.shape)
+        # print(shape_list)
+        
+        pre_img_shape = list(pre_det_image.shape)
         inputs = []
         outputs = []
         
-        inputs.append(grpcclient.InferInput("x", img_shape, "FP32"))
-        inputs[0].set_data_from_numpy(img)
+        inputs.append(grpcclient.InferInput("x", pre_img_shape, "FP32"))
+        inputs[0].set_data_from_numpy(pre_det_image)
 
         outputs.append(grpcclient.InferRequestedOutput("sigmoid_0.tmp_0"))
 
@@ -145,9 +168,9 @@ class TextDetector(object):
 
         preds = {}
         preds['maps'] = output_data
-        post_result = self.postprocess_op(preds, shape_list)
+        post_result = self.postprocess_op(preds, pre_det_shape_list)
         dt_boxes = post_result[0]['points']
-        dt_boxes = self.filter_tag_det_res(dt_boxes, ori_im.shape)
+        dt_boxes = self.filter_tag_det_res(dt_boxes, ori_img.shape)
 
         return dt_boxes
 
