@@ -34,42 +34,18 @@ from src.common.ppocr.postprocess import build_post_process
 logger = get_logger()
 
 class TextDetector(object):
-    def __init__(self, args):
-        self.args = args
-        pre_process_list = [{
-            'DetResizeForTest': {
-                'limit_side_len': args.det_limit_side_len,
-                'limit_type': args.det_limit_type,
-            }
-        }, {
-            'NormalizeImage': {
-                'std': [0.229, 0.224, 0.225],
-                'mean': [0.485, 0.456, 0.406],
-                'scale': '1./255.',
-                'order': 'hwc'
-            }
-        }, {
-            'ToCHWImage': None
-        }, {
-            'KeepKeys': {
-                'keep_keys': ['image', 'shape']
-            }
-        }]
-        
+    def __init__(self):
         postprocess_params = {}
-
         postprocess_params['name'] = 'DBPostProcess'
-        postprocess_params["thresh"] = args.det_db_thresh
-        postprocess_params["box_thresh"] = args.det_db_box_thresh
+        postprocess_params["thresh"] = 0.3
+        postprocess_params["box_thresh"] = 0.6
         postprocess_params["max_candidates"] = 1000
-        postprocess_params["unclip_ratio"] = args.det_db_unclip_ratio
-        postprocess_params["use_dilation"] = args.use_dilation
-        postprocess_params["score_mode"] = args.det_db_score_mode
-        postprocess_params["box_type"] = args.det_box_type
+        postprocess_params["unclip_ratio"] = 1.5
+        postprocess_params["use_dilation"] = False
+        postprocess_params["score_mode"] = "fast"
+        postprocess_params["box_type"] = 'quad'
 
-        self.preprocess_op = create_operators(pre_process_list)
         self.postprocess_op = build_post_process(postprocess_params)
-        self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, 'det', logger)
         
         self.url = '192.168.1.10:8001'
         self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
@@ -150,7 +126,7 @@ class TextDetector(object):
 if __name__ == "__main__":
     args = utility.parse_args()
     img = cv2.imread(args.image_dir)
-    text_detector = TextDetector(args)
+    text_detector = TextDetector()
     res = text_detector(img)
     src_im = utility.draw_text_det_res(res, img)
     cv2.imwrite(f"test_results/result.jpg", src_im)
