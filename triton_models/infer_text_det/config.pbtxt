@@ -1,24 +1,24 @@
-  name: "infer_text_det"
-  platform: "onnxruntime_onnx"
-  max_batch_size: 8
-  input [
-    {
-      name: "x"
-      data_type: TYPE_FP32
-      dims: [3,-1,-1]
-    }
-  ]
+name: "infer_text_det"
+platform: "onnxruntime_onnx"
+max_batch_size: 8
+input [
+  {
+    name: "x"
+    data_type: TYPE_FP32
+    dims: [3,-1,-1]
+  }
+]
 output [
-    {
-      name: "sigmoid_0.tmp_0"
-      data_type: TYPE_FP32
-      dims: [1,-1,-1]
-    }
-  ]
+  {
+    name: "sigmoid_0.tmp_0"
+    data_type: TYPE_FP32
+    dims: [1,-1,-1]
+  }
+]
 
 instance_group [
-    {
-      count: 1
-      kind: KIND_GPU
-    }
-  ]
+  {
+    count: 1
+    kind: KIND_GPU
+  }
+]
