@@ -24,17 +24,19 @@ class TextDetector(object):
         self.model_name = 'text_det'
 
 
-    def __call__(self, img):
+    def __call__(self, imgs):
         inputs = []
         outputs = []
-        inputs.append(grpcclient.InferInput("images", img.shape, "UINT8"))
-        inputs[0].set_data_from_numpy(img)
+        
+        inputs.append(grpcclient.InferInput("images", imgs.shape, "UINT8"))
+        inputs[0].set_data_from_numpy(imgs)
 
         outputs.append(grpcclient.InferRequestedOutput("post_text_output"))
 
         results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
         
         post_text_output = results.as_numpy("post_text_output")
+        print(post_text_output.shape)
 
         return post_text_output
 
