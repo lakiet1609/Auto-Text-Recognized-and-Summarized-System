@@ -225,6 +225,8 @@ class DetResizeForTest(object):
     def __call__(self, data):
         img = data['image']
         src_h, src_w, _ = img.shape
+        if sum([src_h, src_w]) < 64:
+            img = self.image_padding(img)
 
         if self.resize_type == 0:
             # img, shape = self.resize_image_type0(img)

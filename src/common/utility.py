@@ -600,16 +600,6 @@ def draw_boxes(image, boxes, scores=None, drop_score=0.5):
 
 
 def get_rotate_crop_image(img, points):
-    '''
-    img_height, img_width = img.shape[0:2]
-    left = int(np.min(points[:, 0]))
-    right = int(np.max(points[:, 0]))
-    top = int(np.min(points[:, 1]))
-    bottom = int(np.max(points[:, 1]))
-    img_crop = img[top:bottom, left:right, :].copy()
-    points[:, 0] = points[:, 0] - left
-    points[:, 1] = points[:, 1] - top
-    '''
     assert len(points) == 4, "shape of points must be 4*2"
     img_crop_width = int(
         max(

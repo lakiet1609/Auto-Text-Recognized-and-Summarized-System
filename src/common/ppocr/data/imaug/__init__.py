@@ -30,6 +30,7 @@ from .rec_img_aug import BaseDataAugmentation, RecAug, RecConAug, RecResizeImg, 
     RFLRecResizeImg, SVTRRecAug
 from .ssl_img_aug import SSLRotateResize
 from .randaugment import RandAugment
+from .copy_paste import CopyPaste
 from .ColorJitter import ColorJitter
 from .operators import *
 from .label_ops import *

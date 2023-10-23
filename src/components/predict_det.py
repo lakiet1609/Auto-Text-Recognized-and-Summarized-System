@@ -36,7 +36,6 @@ class TextDetector(object):
         results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
         
         post_text_output = results.as_numpy("post_text_output")
-        print(post_text_output.shape)
 
         return post_text_output
 

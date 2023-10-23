@@ -23,14 +23,12 @@ __all__ = ['build_post_process']
 
 from .db_postprocess import DBPostProcess
 from .rec_postprocess import CTCLabelDecode
-from .cls_postprocess import ClsPostProcess
 
 
 def build_post_process(config, global_config=None):
     support_dict = [
         'DBPostProcess',
-        'CTCLabelDecode',
-        'ClsPostProcess'
+        'CTCLabelDecode'
     ]
 
     config = copy.deepcopy(config)
