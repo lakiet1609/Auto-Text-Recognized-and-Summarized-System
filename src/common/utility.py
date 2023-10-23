@@ -24,7 +24,7 @@ import math
 from paddle import inference
 import time
 import random
-from src.common.ppocr.utils.logging import get_logger
+
 
 
 def str2bool(v):
