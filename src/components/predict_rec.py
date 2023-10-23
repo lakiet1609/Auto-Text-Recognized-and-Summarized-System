@@ -17,6 +17,8 @@ from copy import deepcopy
 import src.common.utility as utility
 from src.common.ppocr.postprocess import build_post_process
 from src.common.ppocr.utils.logging import get_logger
+import tritonclient.grpc as grpcclient
+
 logger = get_logger()
 
 class TextRecognizer(object):
@@ -30,6 +32,10 @@ class TextRecognizer(object):
         }
         self.postprocess_op = build_post_process(postprocess_params)
         self.predictor, self.input_tensor, self.output_tensors, self.config = utility.create_predictor(args, 'rec', logger)
+
+        self.url = '192.168.1.10:8001'
+        self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
+        self.model_name = 'infer_text_rec'
     
     def get_rotate_crop_image(self, img, points):
         assert len(points) == 4, "shape of points must be 4*2"
@@ -123,23 +129,28 @@ class TextRecognizer(object):
             norm_img_batch.append(norm_img)
 
         norm_img_batch = np.concatenate(norm_img_batch)
-        norm_img_batch = norm_img_batch.copy()
-            
-        #Infer
-        self.input_tensor.copy_from_cpu(norm_img_batch)
-        self.predictor.run()
-        
-        #Postprocess
-        outputs = []
-        for output_tensor in self.output_tensors:
-            output = output_tensor.copy_to_cpu()
-            outputs.append(output)
 
-        if len(outputs) != 1:
-            preds = outputs
-        else:
-            preds = outputs[0]
+        norm_img_batch_shape = list(norm_img_batch.shape)
+        inputs = []
+        outputs = []
         
+        inputs.append(grpcclient.InferInput("x", norm_img_batch_shape, "FP32"))
+        inputs[0].set_data_from_numpy(norm_img_batch)
+
+        outputs.append(grpcclient.InferRequestedOutput("softmax_2.tmp_0"))
+
+        results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
+        
+        infer_text_rec_output = results.as_numpy("softmax_2.tmp_0")
+            
+        # #Postprocess
+        # outputs = []
+        # for output_tensor in self.output_tensors:
+        #     output = output_tensor.copy_to_cpu()
+        #     outputs.append(output)
+
+        preds = infer_text_rec_output
+
         rec_result = self.postprocess_op(preds)
         
         return rec_result

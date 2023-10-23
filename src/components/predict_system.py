@@ -57,4 +57,3 @@ def main(args):
 if __name__ == "__main__":
     args = utility.parse_args()
     dt_boxes, rec_res = main(args)
-    print(rec_res)
