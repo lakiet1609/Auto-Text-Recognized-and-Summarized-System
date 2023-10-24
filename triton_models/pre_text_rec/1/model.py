@@ -1,39 +1,22 @@
-import os
-import sys
-from PIL import Image
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(__dir__)
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
-
-os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
-
+import triton_python_backend_utils as pb_utils
 import cv2
-import numpy as np
 import math
-import time
-import traceback
-import paddle
+import numpy as np
+import json
 from copy import deepcopy
-import src.common.utility as utility
-from src.common.ppocr.postprocess import build_post_process
-import tritonclient.grpc as grpcclient
+import logging
 
+class TritonPythonModel:
+    def initialize(self, args):
+        self.logger = logging
+        self.model_config = json.loads(args["model_config"])
+        output0_config = pb_utils.get_output_config_by_name(self.model_config, "pre_rec_output")
+        self.output0_dtype = pb_utils.triton_string_to_numpy(output0_config["data_type"])
 
-class TextRecognizer(object):
-    def __init__(self, args):
         self.rec_image_shape = [3,48,320]
-        self.rec_batch_num = 6
-        postprocess_params = {
-            'name': 'CTCLabelDecode',
-            "character_dict_path": args.rec_char_dict_path,
-            "use_space_char": args.use_space_char
-        }
-        self.postprocess_op = build_post_process(postprocess_params)
 
-        self.url = '192.168.1.10:8001'
-        self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
-        self.model_name = 'infer_text_rec'
-    
+        print('Initialized...')
+           
     def get_rotate_crop_image(self, img, points):
         assert len(points) == 4, "shape of points must be 4*2"
         img_crop_width = int(
@@ -94,43 +77,51 @@ class TextRecognizer(object):
                     break
         return _boxes
 
-    def __call__(self, dt_boxes, ori_img):
-        dt_boxes_shape = list(dt_boxes.shape)
-        images_shape = list(ori_img.shape)
-        inputs = []
-        outputs = []
-        
-        inputs.append(grpcclient.InferInput("dt_boxes", dt_boxes_shape, "FP32"))
-        inputs.append(grpcclient.InferInput("images", images_shape, "UINT8"))
-        inputs[0].set_data_from_numpy(dt_boxes)
-        inputs[1].set_data_from_numpy(ori_img)
+    def execute(self, requests):
+        responses = []
+        for request in requests:
+            dt_boxes = pb_utils.get_input_tensor_by_name(request, "dt_boxes").as_numpy()
+            if dt_boxes is None:
+                return None
 
-        outputs.append(grpcclient.InferRequestedOutput("pre_rec_output"))
+            images = pb_utils.get_input_tensor_by_name(request, "images").as_numpy()
+            images = np.squeeze(images, axis=0)
 
-        results = self.triton_client.infer(model_name='pre_text_rec', inputs=inputs, outputs=outputs)
-        
-        pre_rec_output = results.as_numpy("pre_rec_output")
+            dt_boxes = self.sorted_boxes(dt_boxes)
+            dt_boxes = dt_boxes[0]
 
-        pre_rec_output_shape = list(pre_rec_output.shape)
-        
-        inputs = []
-        outputs = []
-        
-        inputs.append(grpcclient.InferInput("x", pre_rec_output_shape, "FP32"))
-        inputs[0].set_data_from_numpy(pre_rec_output)
-
-        outputs.append(grpcclient.InferRequestedOutput("softmax_2.tmp_0"))
-
-        results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
-        
-        infer_text_rec_output = results.as_numpy("softmax_2.tmp_0")
+            img_list = []
+            for bno in range(len(dt_boxes)):
+                tmp_box = deepcopy(dt_boxes[bno])
+                img_crop = self.get_rotate_crop_image(images, tmp_box)
+                img_list.append(img_crop)
             
-        preds = infer_text_rec_output
+            width_list = []
+            for cr_img in img_list:
+                width_list.append(cr_img.shape[1] / float(cr_img.shape[0]))
 
-        rec_result = self.postprocess_op(preds)
-        
-        return rec_result
+            max_wh_ratio = max(width_list)
+            imgC, imgH, imgW = self.rec_image_shape[:3]
+            setting_max_wh_ratio = imgW / imgH
+            max_wh_ratio = max(max_wh_ratio, setting_max_wh_ratio)
 
+            norm_img_batch = []
+            for img in img_list:
+                norm_img = self.resize_norm_img(img,max_wh_ratio)
+                norm_img = norm_img[np.newaxis, :]
+                norm_img_batch.append(norm_img)
 
+            norm_img_batch = np.concatenate(norm_img_batch)
 
+            norm_img_batch = np.ascontiguousarray(norm_img_batch, dtype=self.output0_dtype)
 
+            out_tensor_0 = pb_utils.Tensor("pre_rec_output", norm_img_batch.astype(self.output0_dtype))
+
+            inference_response = pb_utils.InferenceResponse(output_tensors=[out_tensor_0])
+            
+            responses.append(inference_response)
+
+        return responses
+
+    def finalize(self):
+        print('Cleaning up...')

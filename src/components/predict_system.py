@@ -32,7 +32,6 @@ class TextSystem(object):
             return None
         
         dt_boxes = self.text_detector(img)
-        print(dt_boxes.shape)
 
         rec_res = self.text_recognizer(dt_boxes, img)
         
