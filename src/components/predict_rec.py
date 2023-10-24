@@ -48,12 +48,11 @@ class TextRecognizer(object):
 
         results = self.triton_client.infer(model_name=self.model_name, inputs=inputs, outputs=outputs)
         
-        infer_text_rec_output = results.as_numpy("infer_text_rec_output")        
-            
+        infer_text_rec_output = results.as_numpy("infer_text_rec_output")
         preds = infer_text_rec_output
 
         rec_result = self.postprocess_op(preds)
-        
+        print(type(rec_result[0][0]))
         return rec_result
 
 

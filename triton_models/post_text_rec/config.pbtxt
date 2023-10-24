@@ -1,0 +1,29 @@
+name: "post_text_rec"
+backend: "python"
+max_batch_size: 8
+input [
+  {
+    name: "post_rec_input"
+    data_type: TYPE_FP32
+    dims: [-1,97]
+  }
+]
+output [
+    {
+      name: "post_rec_output"
+      data_type: TYPE_FP32
+      dims: [-1,50]
+    },
+    {
+      name: "post_rec_output_score"
+      data_type: TYPE_FP32
+      dims: [-1]
+    }
+  ]
+
+instance_group [
+    {
+      count: 1
+      kind: KIND_GPU
+    }
+  ]
