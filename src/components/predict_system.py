@@ -20,30 +20,15 @@ class TextSystem(object):
     def __init__(self, args):
         self.text_detector = predict_det.TextDetector()
         self.text_recognizer = predict_rec.TextRecognizer(args)
-        self.use_angle_cls = args.use_angle_cls
-        self.drop_score = args.drop_score
         self.args = args
-        self.crop_image_res_index = 0
     
-
     def __call__(self, img):
         if img is None:
             return None
         
         dt_boxes = self.text_detector(img)
 
-        rec_res = self.text_recognizer(dt_boxes, img)
-
-        
-        # filter_boxes, filter_rec_res = [], []
-        
-        # for box, rec_result in zip(dt_boxes, rec_res):
-        #     text, score = rec_result
-        #     if score >= self.drop_score:
-        #         filter_boxes.append(box)
-        #         filter_rec_res.append(rec_result)
-        
-
+        text, score = self.text_recognizer(dt_boxes, img)
 
 def main(args):
     text_sys = TextSystem(args)
