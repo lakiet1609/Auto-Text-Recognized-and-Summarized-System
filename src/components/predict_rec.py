@@ -98,8 +98,8 @@ class TextRecognizer(object):
         return _boxes
 
     def __call__(self, dt_boxes, ori_img):
-        image = deepcopy(ori_img)
-        image = np.squeeze(image, axis=0)
+        print(ori_img.shape)
+        ori_img = np.squeeze(ori_img, axis=0)
 
         if dt_boxes is None:
             return None
@@ -110,7 +110,7 @@ class TextRecognizer(object):
         img_list = []
         for bno in range(len(dt_boxes)):
             tmp_box = deepcopy(dt_boxes[bno])
-            img_crop = self.get_rotate_crop_image(image, tmp_box)
+            img_crop = self.get_rotate_crop_image(ori_img, tmp_box)
             img_list.append(img_crop)
         
         width_list = []
@@ -131,6 +131,8 @@ class TextRecognizer(object):
         norm_img_batch = np.concatenate(norm_img_batch)
 
         norm_img_batch_shape = list(norm_img_batch.shape)
+        print(norm_img_batch_shape)
+        
         inputs = []
         outputs = []
         
@@ -143,12 +145,6 @@ class TextRecognizer(object):
         
         infer_text_rec_output = results.as_numpy("softmax_2.tmp_0")
             
-        # #Postprocess
-        # outputs = []
-        # for output_tensor in self.output_tensors:
-        #     output = output_tensor.copy_to_cpu()
-        #     outputs.append(output)
-
         preds = infer_text_rec_output
 
         rec_result = self.postprocess_op(preds)
