@@ -15,9 +15,14 @@ input [
 ]
 output [
   {
-    name: "infer_text_rec_output"
+    name: "post_rec_output"
     data_type: TYPE_FP32
-    dims: [-1,97]
+    dims: [-1,50]
+  },
+  {
+    name: "post_rec_output_score"
+    data_type: TYPE_FP32
+    dims: [-1]
   }
 ]
 
@@ -49,6 +54,22 @@ ensemble_scheduling {
       output_map {
         key: "softmax_2.tmp_0"
         value: "infer_text_rec_output"
+      }
+    },
+    {
+      model_name: "post_text_rec"
+      model_version: -1
+      input_map {
+        key: "post_rec_input"
+        value: "infer_text_rec_output"
+      }
+      output_map {
+        key: "post_rec_output"
+        value: "post_rec_output"
+      }
+      output_map {
+        key: "post_rec_output_score"
+        value: "post_rec_output_score"
       }
     }
   ]
