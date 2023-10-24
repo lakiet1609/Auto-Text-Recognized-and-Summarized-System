@@ -32,7 +32,6 @@ def main(args):
     text_sys(img)
 
 
-
 if __name__ == "__main__":
     args = utility.parse_args()
     main(args)

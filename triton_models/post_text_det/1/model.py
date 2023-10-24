@@ -77,8 +77,6 @@ class TritonPythonModel:
             post_text_input = pb_utils.get_input_tensor_by_name(request, "post_text_input").as_numpy()
             pre_det_shape_list = pb_utils.get_input_tensor_by_name(request, "pre_det_shape_list").as_numpy()
             
-            
-            
             batch_size = pre_det_shape_list.shape[0]
             
             preds = {}

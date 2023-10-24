@@ -5,9 +5,6 @@ __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
 
-os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
-
-from copy import deepcopy
 import cv2
 import numpy as np
 import sys
@@ -23,7 +20,6 @@ class TextDetector(object):
         self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
         self.model_name = 'text_det'
 
-
     def __call__(self, imgs):
         inputs = []
         outputs = []
@@ -38,7 +34,6 @@ class TextDetector(object):
         post_text_output = results.as_numpy("post_text_output")
 
         return post_text_output
-
 
 if __name__ == "__main__":
     args = utility.parse_args()
