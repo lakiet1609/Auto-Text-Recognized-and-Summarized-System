@@ -10,9 +10,7 @@ import numpy as np
 import sys
 import tritonclient.grpc as grpcclient
 
-
-from src.common.ppocr.postprocess import build_post_process
-from src.common import utility
+from OCR.common import utility
 
 class TextDetector(object):
     def __init__(self):   

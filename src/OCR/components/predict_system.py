@@ -7,9 +7,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
 
 import cv2
 import numpy as np
-import src.common.utility as utility
-import src.components.predict_rec as predict_rec
-import src.components.predict_det as predict_det
+import OCR.common.utility as utility
+import OCR.components.predict_rec as predict_rec
+import OCR.components.predict_det as predict_det
 
 
 class TextSystem(object):
