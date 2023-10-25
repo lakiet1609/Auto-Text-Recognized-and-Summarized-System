@@ -25,7 +25,6 @@ list_files = [
     f'src/{project2_name}/files/params.yaml',
     f'src/{project2_name}/main.py',
     f'src/{project2_name}/app.py',
-    f'src/{project2_name}/setup.py',
     'requirements.txt',
     'triton_models/.gitkeep',
     
