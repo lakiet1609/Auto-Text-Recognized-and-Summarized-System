@@ -14,7 +14,6 @@ list_files = [
     f'src/{project2_name}/__init__.py',
     f'src/{project2_name}/components/__init__.py',
     f'src/{project2_name}/constant/__init__.py',
-    f'src/{project2_name}/entity/__init__.py',
     f'src/{project2_name}/config/__init__.py',
     f'src/{project2_name}/config/configuration.py',
     f'src/{project2_name}/pipeline/__init__.py',
