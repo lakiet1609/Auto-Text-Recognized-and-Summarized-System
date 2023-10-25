@@ -7,7 +7,6 @@ class DataValidation:
     def validate_existed_files(self):
         validation_status = None
         all_files = os.listdir(os.path.join('artifacts', 'dataset', 'samsum_dataset'))
-        print(self.config['ALL_REQUIRED_FILES'])
         for file in all_files:
             if file not in self.config['ALL_REQUIRED_FILES']:
                 validation_status = False

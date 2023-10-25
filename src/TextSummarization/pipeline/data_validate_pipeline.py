@@ -7,6 +7,6 @@ class DataValidationPipeline:
 
     def main(self):
         config = ConfigurationManager()
-        data_validation_config = config.data_validation_config()
+        data_validation_config = config.get_data_validation_config()
         validate_data = DataValidation(data_validation_config)
         validate_data.validate_existed_files()

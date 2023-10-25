@@ -11,7 +11,12 @@ class ConfigurationManager:
 
         create_directory(self.config['artifacts_root'])
     
-    def data_validation_config(self):
+    def get_data_validation_config(self):
         config = self.config['data_validation']
+        create_directory(config['root_dir'])
+        return config
+
+    def get_data_transformation_config(self):
+        config = self.config['data_transformation']
         create_directory(config['root_dir'])
         return config
