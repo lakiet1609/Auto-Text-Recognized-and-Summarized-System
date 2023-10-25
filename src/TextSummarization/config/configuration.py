@@ -20,3 +20,9 @@ class ConfigurationManager:
         config = self.config['data_transformation']
         create_directory(config['root_dir'])
         return config
+    
+    def get_model_trainer(self):
+        config = self.config['model_trainer']
+        param = self.param['TrainingArguments']
+        create_directory(config['root_dir'])
+        return config, param
