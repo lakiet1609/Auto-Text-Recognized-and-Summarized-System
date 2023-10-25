@@ -160,5 +160,5 @@ cython_debug/
 #.idea/
 
 PaddleOCR
-src/models
-src/utils/ppocr
+src/OCR/models
+src/TextSummarization/artifacts

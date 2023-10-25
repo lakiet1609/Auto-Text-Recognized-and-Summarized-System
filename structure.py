@@ -20,7 +20,7 @@ list_files = [
     f'src/{project2_name}/pipeline/__init__.py',
     f'src/{project2_name}/utils/__init__.py',
     f'src/{project2_name}/utils/common.py',
-    f'src/{project2_name}/research/trial.ipynb',
+    f'src/{project2_name}/artifacts/.gitkeep',
     f'src/{project2_name}/files/config.yaml',
     f'src/{project2_name}/files/params.yaml',
     f'src/{project2_name}/main.py',
