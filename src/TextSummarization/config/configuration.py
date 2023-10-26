@@ -26,3 +26,7 @@ class ConfigurationManager:
         param = self.param['TrainingArguments']
         create_directory(config['root_dir'])
         return config, param
+    
+    def get_prediction(self):
+        config = self.config['model_prediction']
+        return config
