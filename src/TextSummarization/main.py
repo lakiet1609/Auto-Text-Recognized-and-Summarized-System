@@ -24,6 +24,6 @@ from src.TextSummarization.pipeline.prediction import Prediction
 # model_trainer.main()
 
 STAGE_NAME = 'PREDICTION'
-text = "Amanda: I baked cookies. Do you want some? Jerry: Sure! Amanda: I'll bring you tomorrow"
+text = ''
 summary = Prediction().predict(text)
 print(summary)
