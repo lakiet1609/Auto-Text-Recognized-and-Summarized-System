@@ -1,5 +1,5 @@
 from src.TextSummarization.constant import *
-from src.TextSummarization.utils.common import read_yaml, create_directory
+from src.utility.common import read_yaml, create_directory
 
 class ConfigurationManager:
     def __init__(self,

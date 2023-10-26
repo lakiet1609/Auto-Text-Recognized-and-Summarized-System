@@ -1,5 +1,5 @@
 import pymongo
-from datetime import datetime
+from src.utility.logger import Logger
 
 class BaseDatabase(object):
     def __init__(self, config):
@@ -12,7 +12,12 @@ class BaseDatabase(object):
         else:
             self.url = f"mongodb://{self.user}:{self.password}@{self.hostname}:{self.port}"
         
+        self.logger = Logger.__call__().get_logger()
         self.initialize()
     
     def initialize(self):
-        self.client = pymongo.MongoClient(self.url)
+        try:
+            self.client = pymongo.MongoClient(self.url)
+            self.logger.info('Connected to MongoDB successfully !')
+        except pymongo.errors.ServerSelectionTimeoutError as er:
+            self.logger.info(f'Cannot connect to MongoDB: {er}')

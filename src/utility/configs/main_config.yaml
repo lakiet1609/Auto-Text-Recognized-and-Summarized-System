@@ -1,0 +1,7 @@
+database: 
+  hostname: "localhost"
+  port: 27017
+  user: text_system
+  password: text_system
+  database_name: text_database
+  collection_name: text
