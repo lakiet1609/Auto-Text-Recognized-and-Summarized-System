@@ -1,6 +1,6 @@
 from fastapi import status, HTTPException
-from src.database.text_database import TextDatabase
-from src.utility.configuration import Configuration
+from database.text_database import TextDatabase
+from utility.configuration import Configuration
 from copy import deepcopy
 
 class TextCRUD:

@@ -1,5 +1,5 @@
 import pymongo
-from src.utility.logger import Logger
+from utility.logger import Logger
 
 class BaseDatabase(object):
     def __init__(self, config):

@@ -11,7 +11,7 @@ import numpy as np
 
 class TextRecognizer(object):
     def __init__(self):
-        self.dictionary = (open('common/ppocr/utils/en_dict.txt', 'r').read().split('\n'))
+        self.dictionary = (open('OCR/common/ppocr/utils/en_dict.txt', 'r').read().split('\n'))
         self.url = '192.168.1.10:8001'
         self.triton_client = grpcclient.InferenceServerClient(url=self.url, verbose=False)
         self.model_name = 'text_rec'
@@ -47,6 +47,8 @@ class TextRecognizer(object):
         for word in reversed(texts):
             word = self.decode(word)
             ori_text =  ori_text + ' ' + word
+        
+        ori_text = [ori_text]
         
         return ori_text, scores
 

@@ -1,6 +1,6 @@
-from src.utility.common import Singleton, read_yaml
-from src.utility.logger import Logger
-from src.utility import *
+from utility.common import Singleton, read_yaml
+from utility.logger import Logger
+from utility import *
 
 class Configuration(object, metaclass=Singleton):
     def __init__(self, config = CONFIG_FILE_PATH):

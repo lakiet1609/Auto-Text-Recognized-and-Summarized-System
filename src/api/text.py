@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, status
 from urllib.parse import unquote
-from src.database.text_crud import TextCRUD
+from database.text_crud import TextCRUD
 
 text_crud = TextCRUD()
 router = APIRouter(prefix='/text', tags=['text'])

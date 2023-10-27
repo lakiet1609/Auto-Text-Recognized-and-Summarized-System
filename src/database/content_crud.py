@@ -1,6 +1,7 @@
-from src.database.text_database import TextDatabase
-from src.OCR.components.predict_system import TextSystem
-from src.utility.configuration import Configuration
+from database.text_database import TextDatabase
+from OCR.components.predict_system import TextSystem
+from utility.configuration import Configuration
+from utility.schema import ImageValidation
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 import os, shutil, cv2, uuid
@@ -13,21 +14,32 @@ class ContentCRUD:
         self.database_config = Configuration().init_databse()
         self.text_rec = TextSystem()
 
+
     def insert_content(self, text_id, image):
         if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
+        
         collection = self.db_instance.get_text_collection()
         text_doc = collection.find_one({'id': text_id}, {'_id': 0})
-        text, _ = self.text_rec(img=image)
-        content_id = str(uuid.uuid4().hex)
-        content_doc = {'id': content_id, 'content': list(text)}
-        if 'inputs' not in text_doc.keys() or text_doc['inputs'] is None:
-            collection.update_one({'id': text_id}, {'$set': {'inputs': [content_doc]}})
+        validate_result = ImageValidation.IMAGE_IS_VALID
+        if validate_result == ImageValidation.IMAGE_IS_VALID:
+            text, _ = self.text_rec(img=image)
+            print(text)
+            content_id = str(uuid.uuid4().hex)
+            content_doc = {'id': content_id, 'content': list(text)}
+            
+            if 'inputs' not in text_doc.keys() or text_doc['inputs'] is None:
+                collection.update_one({'id': text_id}, {'$set': {'inputs': [content_doc]}})
+            else:
+                collection.update_one({'id': text_id}, {'$push': {'inputs': [content_doc]}})
+            
+            status_result = status.HTTP_201_CREATED
         else:
-            collection.update_one({'id': text_id}, {'$push': {'inputs': [content_doc]}})
-        status_result = status.HTTP_201_CREATED
-        return JSONResponse(status_code= status_result)
-    
+            status_result = status.HTTP_406_NOT_ACCEPTABLE
+        
+        return JSONResponse(status_code= status_result, content={'INFO': validate_result})
+
+
     def select_all_content_of_text(self, text_id, skip:int, limit:int):
         if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)

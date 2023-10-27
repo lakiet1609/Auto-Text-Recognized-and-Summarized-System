@@ -1,6 +1,6 @@
-from src.database.base_database import BaseDatabase
-from src.utility.common import Singleton
-from src.utility.configuration import Configuration
+from database.base_database import BaseDatabase
+from utility.common import Singleton
+from utility.configuration import Configuration
 import numpy as np
 
 class TextDatabase(BaseDatabase, metaclass=Singleton):

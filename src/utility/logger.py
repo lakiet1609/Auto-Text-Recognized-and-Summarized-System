@@ -2,7 +2,7 @@ import datetime
 import logging
 import time
 import os
-from src.utility.common import Singleton
+from utility.common import Singleton
 
 class Logger(object, metaclass=Singleton):
     _logger = None
