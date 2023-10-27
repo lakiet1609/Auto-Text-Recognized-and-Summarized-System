@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
 
 
 import tritonclient.grpc as grpcclient
-
+import numpy as np
 
 class TextRecognizer(object):
     def __init__(self):
@@ -43,11 +43,12 @@ class TextRecognizer(object):
         texts = results.as_numpy("post_rec_output")
         scores = results.as_numpy("post_rec_output_score")
         
-        for text, score in zip(texts,scores):
-            ori_text = self.decode(text)
-            print(ori_text, score)
-
-        return texts, scores
+        ori_text = ''
+        for word in reversed(texts):
+            word = self.decode(word)
+            ori_text =  ori_text + ' ' + word
+        
+        return ori_text, scores
 
 
 

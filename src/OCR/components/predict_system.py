@@ -13,25 +13,19 @@ import OCR.components.predict_det as predict_det
 
 
 class TextSystem(object):
-    def __init__(self, args):
+    def __init__(self):
         self.text_detector = predict_det.TextDetector()
         self.text_recognizer = predict_rec.TextRecognizer()
-        self.args = args
     
     def __call__(self, img):
-        if img is None:
-            return None
-        
+        img = cv2.imread(img)
+        img = np.expand_dims(img, axis=0)
         dt_boxes = self.text_detector(img)
-        text, score = self.text_recognizer(dt_boxes, img)
-
-def main(args):
-    text_sys = TextSystem(args)
-    img = cv2.imread(args.image_dir)
-    img = np.expand_dims(img, axis=0)
-    text_sys(img)
-
+        texts, scores = self.text_recognizer(dt_boxes, img)
+        return texts, scores
 
 if __name__ == "__main__":
-    args = utility.parse_args()
-    main(args)
+    text_sys = TextSystem()
+    img = 'test/mckinlay-820.jpg'
+    texts, scores = text_sys(img)
+    print(texts)
