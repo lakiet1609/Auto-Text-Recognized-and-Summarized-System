@@ -29,7 +29,7 @@ class TextDatabase(BaseDatabase, metaclass=Singleton):
                 if ('content' not in input.keys()) or (input['content'] is None):
                     continue
                 content_id = input['id']
-                content = list(input['content'])
+                content = input['content']
                 self.contents[content_id] = content
                 self.text[content_id] = {
                     'text_id': text_id,
