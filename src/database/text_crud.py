@@ -43,7 +43,7 @@ class TextCRUD:
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         collection.delete_one({'id': id})
     
-    def delete_all_people(self):
+    def delete_all_text(self):
         collection = self.db_instance.get_text_collection()
         collection.delete_many({})
 

@@ -55,7 +55,6 @@ class ContentCRUD:
         collection = self.db_instance.get_text_collection()
         collection.update_one({'id':text_id, 'faces.id': content_id}, {'$pull': {'faces': {'id': content_id}}})
     
-
     def delete_all_contents(self, text_id: str):
         if not self.db_instance.check_person_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
