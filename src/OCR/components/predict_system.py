@@ -26,6 +26,6 @@ class TextSystem(object):
 
 if __name__ == "__main__":
     text_sys = TextSystem()
-    img = 'OCR/test/mckinlay-820.jpg'
+    img = 'OCR/test/text1.jpg'
     texts, scores = text_sys(img)
     print(texts)

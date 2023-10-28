@@ -7,10 +7,18 @@ sys.path.insert(0, os.path.abspath(os.path.join(__dir__, '../..')))
 
 from database.text_crud import TextCRUD
 from database.content_crud import ContentCRUD
+from TextSummarization.pipeline.prediction import Prediction
 
 if __name__ == '__main__':
     text_crud = TextCRUD()
-    text_crud.delete_all_text()
-    # content_crud = ContentCRUD()
-    # content_crud.insert_content(text_id='kiet', image='OCR/test/mckinlay-820.jpg')
+    content_crud = ContentCRUD()
+    prediction = Prediction()
+    # texts = text_crud.insert_text(id='book', name='rabbit')
+    # content_crud.insert_content(text_id='book', image='OCR/test/text1.jpg')
+    # content_crud.delete_all_contents(text_id='book')
+    # content_crud.delete_content_by_id(text_id='book', content_id='dc0fd093046947e5a93deb5821a3bf41')
+    a = content_crud.select_content_by_id(text_id='book', content_id="dc0fd093046947e5a93deb5821a3bf41")
+    print(a)
 
+    # result = prediction.predict(a)
+    # print(result)

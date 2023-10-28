@@ -16,6 +16,6 @@ model_trainer:
   model_ckpt: google/pegasus-cnn_dailymail
 
 model_prediction:
-  data_path: artifacts/data_transformation/samsum_dataset
-  model_path: artifacts/model_trainer/pegasus-samsum-model
-  tokenizer_path: artifacts/model_trainer/tokenizer
+  data_path: TextSummarization/artifacts/data_transformation/samsum_dataset
+  model_path: TextSummarization/artifacts/model_trainer/pegasus-samsum-model
+  tokenizer_path: TextSummarization/artifacts/model_trainer/tokenizer

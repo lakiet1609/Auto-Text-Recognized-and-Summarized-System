@@ -1,6 +1,6 @@
   name: "infer_text_rec"
   platform: "onnxruntime_onnx"
-  max_batch_size: 8
+  max_batch_size: 50
   input [
     {
       name: "x"

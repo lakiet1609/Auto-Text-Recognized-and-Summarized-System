@@ -1,6 +1,6 @@
 name: "post_text_rec"
 backend: "python"
-max_batch_size: 8
+max_batch_size: 50
 input [
   {
     name: "post_rec_input"

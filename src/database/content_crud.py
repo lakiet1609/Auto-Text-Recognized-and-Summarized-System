@@ -24,14 +24,13 @@ class ContentCRUD:
         validate_result = ImageValidation.IMAGE_IS_VALID
         if validate_result == ImageValidation.IMAGE_IS_VALID:
             text, _ = self.text_rec(img=image)
-            print(text)
             content_id = str(uuid.uuid4().hex)
-            content_doc = {'id': content_id, 'content': list(text)}
+            content_doc = {'id': content_id, 'content': text}
             
             if 'inputs' not in text_doc.keys() or text_doc['inputs'] is None:
-                collection.update_one({'id': text_id}, {'$set': {'inputs': [content_doc]}})
+                collection.update_one({'id': text_id}, {'$set': {'inputs': content_doc}})
             else:
-                collection.update_one({'id': text_id}, {'$push': {'inputs': [content_doc]}})
+                collection.update_one({'id': text_id}, {'$push': {'inputs': content_doc}})
             
             status_result = status.HTTP_201_CREATED
         else:
@@ -61,17 +60,28 @@ class ContentCRUD:
         inputs = inputs[skip: skip+limit]
         return inputs
     
+    def select_content_by_id(self, text_id, content_id):
+        if not self.db_instance.check_text_by_id(text_id):
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
+        collection = self.db_instance.get_text_collection()
+        text_doc = collection.find_one({'id': text_id}, {'_id': 0, 'inputs': {'id': content_id, 'content': 1}})
+        return  text_doc['inputs']['content'][0]
+        
+    
     def delete_content_by_id(self, text_id, content_id):
         if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         collection = self.db_instance.get_text_collection()
-        collection.update_one({'id':text_id, 'faces.id': content_id}, {'$pull': {'faces': {'id': content_id}}})
+        collection.update_one({'id':text_id}, {'$pull': {'inputs': {'id': content_id}}})
+
     
     def delete_all_contents(self, text_id: str):
-        if not self.db_instance.check_person_by_id(text_id):
+        if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
-        collection = self.db_instance.get_people_collection()
-        collection.update_one({'id': text_id}, {'$pull': {'faces': {}}})
+        collection = self.db_instance.get_text_collection()
+        collection.update_one({'id': text_id}, {'$unset': {'inputs': 1}})
+        # collection.update_one({'id': text_id}, {'$pull': {'inputs': {}}})
+
 
 
 

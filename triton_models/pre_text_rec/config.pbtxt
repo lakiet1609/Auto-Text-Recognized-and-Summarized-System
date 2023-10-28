@@ -1,6 +1,6 @@
 name: "pre_text_rec"
 backend: "python"
-max_batch_size: 8
+max_batch_size: 50
 input [
 {
     name: "dt_boxes"
