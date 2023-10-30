@@ -11,7 +11,7 @@ import numpy as np
 class ContentCRUD:
     def __init__(self):
         self.db_instance = TextDatabase()
-        self.database_config = Configuration().init_databse()
+        self.database_config = Configuration().init_database()
         self.text_rec = TextSystem()
 
 

@@ -5,7 +5,7 @@ import numpy as np
 
 class TextDatabase(BaseDatabase, metaclass=Singleton):
     def __init__(self):
-        self.config = Configuration().init_databse()
+        self.config = Configuration().init_database()
         super(TextDatabase, self).__init__(self.config)
 
         database_name = self.config['database_name']

@@ -16,4 +16,7 @@ python-box==6.0.2
 fastapi
 uvicorn
 Jinja2==3.1.2
+paddleocr
+tritonclient[all]
+torch
 

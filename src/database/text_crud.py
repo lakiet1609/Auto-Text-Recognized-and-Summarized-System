@@ -5,7 +5,7 @@ from copy import deepcopy
 
 class TextCRUD:
     def __init__(self):
-        self.database_config = Configuration().init_databse()
+        self.database_config = Configuration().init_database()
         self.db_instance = TextDatabase()
     
     def insert_text(self, id, name):
