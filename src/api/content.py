@@ -9,7 +9,7 @@ import numpy as np
 
 content_crud = ContentCRUD()
 
-router = APIRouter(prefix='/text', tags=['content'])
+router = APIRouter(prefix='/text', tags=['inputs'])
 
 @router.get('/{text_id}/inputs', status_code=status.HTTP_200_OK)
 async def get_all_content(text_id, skip:int, limit:int):
