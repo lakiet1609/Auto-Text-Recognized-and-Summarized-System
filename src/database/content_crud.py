@@ -28,10 +28,7 @@ class ContentCRUD:
             content_id = str(uuid.uuid4().hex)
             content_doc = {'id': content_id, 'content': [text]}
             
-            if 'inputs' not in text_doc.keys() or text_doc['inputs'] is None:
-                collection.update_one({'id': text_id}, {'$set': {'inputs': [content_doc]}})
-            else:
-                collection.update_one({'id': text_id}, {'$push': {'inputs': [content_doc]}})
+            collection.update_one({'id': text_id}, {'$push': {'inputs': content_doc}})
             
             status_result = status.HTTP_201_CREATED
         else:
@@ -77,15 +74,11 @@ class ContentCRUD:
         text_docs = collection.find_one({'id': text_id},  {'_id': 0, 'inputs': {'id': 1, 'content': 1}})
         documents = text_docs['inputs']
         connected_texts = ''
-        for i, content in enumerate(documents):
-            if i == 0:
-                new_content = content['content'][0][0]
-            else:
-                new_content = content[0]['content'][0][0]
+        for content in documents:
+            new_content = content['content'][0][0]
             connected_texts += new_content
         
         connected_texts = [connected_texts]
-
         return connected_texts
 
 
