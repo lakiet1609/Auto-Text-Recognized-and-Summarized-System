@@ -12,3 +12,8 @@ class Prediction:
         pipe = pipeline('summarization', model = self.config['model_path'], tokenizer=tokenizer)
         output = pipe(text, **gen_kwargs)[0]["summary_text"]
         return output
+    
+if __name__ == '__main__':
+    prediction = Prediction()
+    predicted_summarization = prediction.predict('')
+    print(predicted_summarization)

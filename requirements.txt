@@ -19,4 +19,5 @@ Jinja2==3.1.2
 paddleocr
 tritonclient[all]
 torch
+python-multipart
 
