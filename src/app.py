@@ -8,5 +8,5 @@ router.include_router(text.router)
 router.include_router(content.router)
 router.include_router(recognition.router)
 
-app = FastAPI(title='Account', version='1.0.0')
+app = FastAPI(title='Text auto recognized and summarized', version='1.0.0')
 app.include_router(router)

@@ -18,7 +18,6 @@ class TextSystem(object):
         self.text_recognizer = predict_rec.TextRecognizer()
     
     def __call__(self, img):
-        img = cv2.imread(img)
         img = np.expand_dims(img, axis=0)
         dt_boxes = self.text_detector(img)
         texts, scores = self.text_recognizer(dt_boxes, img)
@@ -27,5 +26,6 @@ class TextSystem(object):
 if __name__ == "__main__":
     text_sys = TextSystem()
     img = 'OCR/test/text1.jpg'
+    img = cv2.imread(img)
     texts, scores = text_sys(img)
     print(texts)

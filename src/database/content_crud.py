@@ -20,7 +20,6 @@ class ContentCRUD:
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         
         collection = self.db_instance.get_text_collection()
-        text_doc = collection.find_one({'id': text_id}, {'_id': 0})
         validate_result = ImageValidation.IMAGE_IS_VALID
         
         if validate_result == ImageValidation.IMAGE_IS_VALID:
@@ -37,7 +36,7 @@ class ContentCRUD:
         return JSONResponse(status_code= status_result, content={'INFO': validate_result})
 
 
-    def select_all_content_id(self, text_id, skip:int, limit:int):
+    def select_all_ids(self, text_id, skip:int, limit:int):
         if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         collection = self.db_instance.get_text_collection()
@@ -67,7 +66,7 @@ class ContentCRUD:
         return  text_doc['inputs'][0]['content'][0]
     
 
-    def select_all_content_by_id(self, text_id):
+    def select_all_contents_by_id(self, text_id):
         if not self.db_instance.check_text_by_id(text_id):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         collection = self.db_instance.get_text_collection()

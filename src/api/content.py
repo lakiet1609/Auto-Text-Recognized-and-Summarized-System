@@ -11,9 +11,14 @@ content_crud = ContentCRUD()
 
 router = APIRouter(prefix='/text', tags=['inputs'])
 
-@router.get('/{text_id}/inputs', status_code=status.HTTP_200_OK)
-async def get_all_content(text_id, skip:int, limit:int):
-    content_docs = content_crud.select_all_content_of_text(text_id, skip, limit)
+@router.get('/{text_id}/inputs1', status_code=status.HTTP_200_OK)
+async def get_all_ids(text_id, skip:int, limit:int):
+    content_docs = content_crud.select_all_ids(text_id, skip, limit)
+    return content_docs
+
+@router.get('/{text_id}/inputs2', status_code=status.HTTP_200_OK)
+async def get_all_contents_by_id(text_id):
+    content_docs = content_crud.select_all_contents_by_id(text_id)
     return content_docs
 
 @router.get('/{text_id}/inputs/{content_id}', status_code=status.HTTP_200_OK)
