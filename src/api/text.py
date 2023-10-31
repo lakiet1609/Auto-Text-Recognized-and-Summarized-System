@@ -17,9 +17,9 @@ async def select_text_by_id(text_id):
     return text_doc
 
 @router.post('', status_code=status.HTTP_201_CREATED)
-async def insert_text(text_id):
+async def insert_text(text_id, name):
     text_id, name = unquote(text_id), unquote(name)
-    text_doc = text_crud.insert_person(text_id, name)
+    text_doc = text_crud.insert_text(text_id, name)
     return text_doc
 
 @router.post('/{text_id}/name', response_class= Response, status_code= status.HTTP_204_NO_CONTENT)

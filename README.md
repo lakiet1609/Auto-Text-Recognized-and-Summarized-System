@@ -78,3 +78,17 @@ TEXT DETECTION -> TEXT RECOGNITION -> TEXT SUMMARIZATION
 ![fast_api](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/55b11cf1-0d73-457c-96ee-5bb5eb087129)
 
 
+## RESULTS
+
+- Insert Text (text_id and name)
+
+![insert_text](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/1dd92f95-979f-4ffd-a29c-c6f410f6dee2)
+
+- Insert Content (text_id, image)
+
+![Insert_content](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/6ed7b228-1b39-406d-976c-db5f28aed5a3)
+
+- Summarize content (text_id)
+
+![Screenshot from 2023-10-31 22-55-33](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/ab8d1bd0-d128-46cc-b0a1-e3c5cef8941b)
+
