@@ -1,8 +1,10 @@
-# END TO END TEXT RECOGNIZATION AND SUMMARIZATION SYSTEM
+# DEPLOY TEXT RECOGNIZATION AND SUMMARIZATION SYSTEM
 
 ## OCR SYSTEM (TEXT DETECTION & TEXT RECOGNIZATION)
 
 There are 2 subsystems inside OCR System including: Text detection & Text recognition
+
+![123](https://github.com/lakiet1609/Auto-Text-Recognized-and-Summarized-System/assets/116550803/e8a81c34-1666-473d-a57b-d186342b6538)
 
 ### TEXT DETECTION PIPELINE (Using PaddleOCR)
 
@@ -10,10 +12,10 @@ There are 2 subsystems inside OCR System including: Text detection & Text recogn
 - Input: image
 
 2. Infer model
--Input: output of text detection preprocess model
+- Input: output of text detection preprocess model
 
 3. Postprocess for text detection model
--Input: output of text detection inference model
+- Input: output of text detection inference model
 
 4. Serving model using TRITON SERVER
 - Preprocess: Triton inference server - python backend
@@ -69,7 +71,7 @@ TEXT DETECTION -> TEXT RECOGNITION -> TEXT SUMMARIZATION
 
 ![mongo_database](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/0519fb4f-11f0-4306-bc76-0a339001aa47)
 
-3. Pull the stored values in MONGO DATABASE to get the predicted summarization using SUMMARIZATION SYSTEM
+3. Pull the stored values on MONGO DATABASE to get the predicted summarization using SUMMARIZATION SYSTEM
 
 ![text_summarization](https://github.com/lakiet1609/Text-Recognition-and-Summarization-System/assets/116550803/a7b72e62-9d45-4a48-8627-079fefdba168)
 
